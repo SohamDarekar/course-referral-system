@@ -90,25 +90,25 @@ export default function MyCoursesPage() {
   return (
     <>
       <Notification />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 transition-colors">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <button
               onClick={() => router.push('/')}
               className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 mb-4 transition-colors"
             >
               <ArrowLeft size={20} />
-              <span>Back to Courses</span>
+              <span className="text-sm sm:text-base">Back to Courses</span>
             </button>
             
             <div className="flex items-center gap-3">
-              <BookOpen size={32} className="text-primary-600 dark:text-primary-400" />
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <BookOpen size={28} className="text-primary-600 dark:text-primary-400 sm:w-8 sm:h-8" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                 My Purchased Courses
               </h1>
             </div>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
               Manage your course collection
             </p>
           </div>
@@ -118,26 +118,26 @@ export default function MyCoursesPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 sm:p-12 text-center"
             >
-              <BookOpen size={64} className="mx-auto text-gray-400 dark:text-gray-600 mb-4" />
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+              <BookOpen size={48} className="mx-auto text-gray-400 dark:text-gray-600 mb-4 sm:w-16 sm:h-16" />
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-2">
                 No Courses Yet
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6">
                 You haven't purchased any courses yet. Browse our collection to get started!
               </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => router.push('/')}
-                className="bg-primary-600 dark:bg-primary-500 text-white px-6 py-3 rounded-md hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors"
+                className="bg-primary-600 dark:bg-primary-500 text-white px-6 py-3 rounded-md hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors text-sm sm:text-base"
               >
                 Browse Courses
               </motion.button>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {courses.map((course, index) => (
                 <motion.div
                   key={course.purchaseId}
@@ -146,16 +146,16 @@ export default function MyCoursesPage() {
                   transition={{ delay: index * 0.1 }}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
                 >
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  <div className="p-5 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
                       {course.title}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
                       {course.description}
                     </p>
                     
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+                      <span className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">
                         ${course.price}
                       </span>
                       <span className="text-xs text-gray-500 dark:text-gray-500">
@@ -168,7 +168,7 @@ export default function MyCoursesPage() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => router.push(`/courses/${course.courseId}`)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors text-sm sm:text-base"
                       >
                         <BookOpen size={18} />
                         <span>View Details</span>
@@ -179,7 +179,7 @@ export default function MyCoursesPage() {
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleRemoveCourse(course.purchaseId, course.title)}
                         disabled={removingId === course.purchaseId}
-                        className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                        className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors text-sm sm:text-base ${
                           removingId === course.purchaseId
                             ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
                             : 'bg-red-500 hover:bg-red-600 text-white'
