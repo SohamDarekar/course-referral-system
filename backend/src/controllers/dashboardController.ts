@@ -104,6 +104,96 @@ export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<v
   }
 };
 
+export const purchaseWithCredits = async (req: AuthRequest, res: Response): Promise<void> => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { id: courseId } = req.params;
+    const userId = req.userId;
+
+    if (!userId) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    // Check if course exists
+    const course = await Course.findById(courseId).session(session);
+    if (!course) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(404).json({ error: 'Course not found' });
+      return;
+    }
+
+    // Check if user has already purchased this course
+    const existingPurchase = await Purchase.findOne({ userId, courseId }).session(session);
+    if (existingPurchase) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(400).json({ error: 'Course already purchased' });
+      return;
+    }
+
+    // Find the user
+    const user = await User.findById(userId).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // Check if user has enough credits
+    if (user.credits < course.creditsRequired) {
+      const creditsNeeded = course.creditsRequired - user.credits;
+      // Each referral gives 2 credits (when they make first purchase)
+      const referralsNeeded = Math.ceil(creditsNeeded / 2);
+      
+      await session.abortTransaction();
+      session.endSession();
+      res.status(400).json({
+        error: 'Insufficient credits',
+        currentCredits: user.credits,
+        creditsRequired: course.creditsRequired,
+        creditsNeeded,
+        referralsNeeded,
+        message: `Refer ${referralsNeeded} more user${referralsNeeded > 1 ? 's' : ''} to buy this course`,
+      });
+      return;
+    }
+
+    // Deduct credits from user
+    user.credits -= course.creditsRequired;
+    await user.save({ session });
+
+    // Create purchase record with price as 0 (paid with credits)
+    const purchase = new Purchase({
+      userId,
+      courseId,
+      price: 0, // Paid with credits
+    });
+    await purchase.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      success: true,
+      message: 'Course purchased successfully with credits!',
+      remainingCredits: user.credits,
+      creditsUsed: course.creditsRequired,
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('Purchase with credits error:', error);
+    res.status(500).json({ error: 'Failed to process purchase' });
+  }
+};
+
 export const getDashboardStats = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId;

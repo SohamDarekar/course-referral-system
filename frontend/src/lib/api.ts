@@ -36,8 +36,16 @@ export const coursesAPI = {
     const response = await apiClient.get('/api/courses');
     return response.data;
   },
+  getById: async (courseId: string) => {
+    const response = await apiClient.get(`/api/courses/${courseId}`);
+    return response.data;
+  },
   purchase: async (courseId: string) => {
     const response = await apiClient.post(`/api/courses/${courseId}/purchase`);
+    return response.data;
+  },
+  purchaseWithCredits: async (courseId: string) => {
+    const response = await apiClient.post(`/api/courses/${courseId}/purchase-with-credits`);
     return response.data;
   },
 };

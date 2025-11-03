@@ -99,7 +99,6 @@ export default function Home() {
                   key={course._id} 
                   course={course}
                   isPurchased={purchasedCourseIds.includes(course._id)}
-                  onPurchaseSuccess={fetchPurchasedCourses}
                 />
               ))}
             </div>

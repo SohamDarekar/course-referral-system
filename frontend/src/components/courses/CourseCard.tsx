@@ -1,10 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { coursesAPI, setAuthToken } from '@/lib/api';
-import { useNotificationStore } from '@/store/useStore';
+import { useRouter } from 'next/navigation';
 
 interface Course {
   _id: string;
@@ -16,45 +13,13 @@ interface Course {
 interface CourseCardProps {
   course: Course;
   isPurchased?: boolean;
-  onPurchaseSuccess?: () => void;
 }
 
-export default function CourseCard({ course, isPurchased = false, onPurchaseSuccess }: CourseCardProps) {
-  const { data: session } = useSession();
-  const [purchasing, setPurchasing] = useState(false);
-  const { showNotification } = useNotificationStore();
+export default function CourseCard({ course, isPurchased = false }: CourseCardProps) {
+  const router = useRouter();
 
-  const handlePurchase = async () => {
-    if (!session) {
-      showNotification('Please login to purchase courses', 'error');
-      return;
-    }
-
-    try {
-      setPurchasing(true);
-      const token = (session as any).accessToken;
-      setAuthToken(token);
-
-      const response = await coursesAPI.purchase(course._id);
-      
-      showNotification(
-        response.creditsEarned > 0
-          ? `Success! You earned ${response.creditsEarned} credits!`
-          : 'Course purchased successfully!',
-        'success'
-      );
-
-      if (onPurchaseSuccess) {
-        onPurchaseSuccess();
-      }
-    } catch (error: any) {
-      showNotification(
-        error.response?.data?.error || 'Failed to purchase course',
-        'error'
-      );
-    } finally {
-      setPurchasing(false);
-    }
+  const handleClick = () => {
+    router.push(`/courses/${course._id}`);
   };
 
   return (
@@ -63,7 +28,8 @@ export default function CourseCard({ course, isPurchased = false, onPurchaseSucc
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+      onClick={handleClick}
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
     >
       <div className="p-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{course.title}</h3>
@@ -78,15 +44,13 @@ export default function CourseCard({ course, isPurchased = false, onPurchaseSucc
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handlePurchase}
-              disabled={purchasing || !session}
-              className={`px-6 py-2 rounded-md font-medium transition-colors ${
-                purchasing || !session
-                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                  : 'bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600'
-              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick();
+              }}
+              className="px-6 py-2 rounded-md font-medium transition-colors bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600"
             >
-              {purchasing ? 'Processing...' : 'Buy Course'}
+              View Details
             </motion.button>
           )}
         </div>

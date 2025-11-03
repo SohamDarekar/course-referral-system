@@ -163,20 +163,32 @@ export default function MyCoursesPage() {
                       </span>
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleRemoveCourse(course.purchaseId, course.title)}
-                      disabled={removingId === course.purchaseId}
-                      className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors ${
-                        removingId === course.purchaseId
-                          ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
-                          : 'bg-red-500 hover:bg-red-600 text-white'
-                      }`}
-                    >
-                      <Trash2 size={18} />
-                      <span>{removingId === course.purchaseId ? 'Removing...' : 'Remove Course'}</span>
-                    </motion.button>
+                    <div className="space-y-2">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => router.push(`/courses/${course.courseId}`)}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors"
+                      >
+                        <BookOpen size={18} />
+                        <span>View Details</span>
+                      </motion.button>
+
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleRemoveCourse(course.purchaseId, course.title)}
+                        disabled={removingId === course.purchaseId}
+                        className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                          removingId === course.purchaseId
+                            ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+                            : 'bg-red-500 hover:bg-red-600 text-white'
+                        }`}
+                      >
+                        <Trash2 size={18} />
+                        <span>{removingId === course.purchaseId ? 'Removing...' : 'Remove Course'}</span>
+                      </motion.button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
