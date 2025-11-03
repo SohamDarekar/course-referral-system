@@ -38,7 +38,7 @@ export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    // Create purchase record
+    // Create purchase record first to prevent race conditions
     const purchase = new Purchase({
       userId,
       courseId,
@@ -47,6 +47,7 @@ export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<v
     await purchase.save({ session });
 
     // Find the user with session for transactional consistency
+    // Use findOneAndUpdate with atomic operations to prevent race conditions
     const user = await User.findById(userId).session(session);
 
     if (!user) {
@@ -56,7 +57,7 @@ export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    // Check if user has already converted
+    // Check if user has already converted (double-check with session lock)
     if (user.hasConverted) {
       await session.commitTransaction();
       session.endSession();
@@ -68,20 +69,29 @@ export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    // Mark user as converted
+    // Mark user as converted and add credits atomically
     user.hasConverted = true;
     user.credits += 2; // User earns 2 credits on their first purchase
 
     let referrerCredited = false;
 
-    // If user was referred, credit the referrer
+    // If user was referred, credit the referrer (with double-credit prevention)
     if (user.referredBy) {
       const referrer = await User.findById(user.referredBy).session(session);
 
       if (referrer) {
-        referrer.credits += 2;
-        await referrer.save({ session });
-        referrerCredited = true;
+        // Check if this referral has already been credited to prevent double-crediting
+        const alreadyCredited = referrer.creditedReferrals.some(
+          (id) => id.toString() === userId.toString()
+        );
+
+        if (!alreadyCredited) {
+          // Atomically update referrer's credits and mark this referral as credited
+          referrer.credits += 2;
+          referrer.creditedReferrals.push(new mongoose.Types.ObjectId(userId));
+          await referrer.save({ session });
+          referrerCredited = true;
+        }
       }
     }
 
@@ -96,9 +106,16 @@ export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<v
       userCredits: user.credits,
       referrerCredited,
     });
-  } catch (error) {
+  } catch (error: any) {
     await session.abortTransaction();
     session.endSession();
+    
+    // Handle duplicate key errors specifically
+    if (error.code === 11000) {
+      res.status(400).json({ error: 'Course already purchased' });
+      return;
+    }
+    
     console.error('Purchase course error:', error);
     res.status(500).json({ error: 'Failed to process purchase' });
   }

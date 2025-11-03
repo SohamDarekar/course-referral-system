@@ -8,6 +8,7 @@ export interface IUser extends Document {
   referredBy?: mongoose.Types.ObjectId;
   credits: number;
   hasConverted: boolean;
+  creditedReferrals: mongoose.Types.ObjectId[]; // Track which referrals have been credited
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +58,12 @@ const UserSchema = new Schema<IUser>(
     hasConverted: {
       type: Boolean,
       default: false,
+    },
+    creditedReferrals: {
+      type: [Schema.Types.ObjectId],
+      ref: 'User',
+      default: [],
+      index: true,
     },
   },
   {
