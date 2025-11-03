@@ -48,3 +48,29 @@ export const dashboardAPI = {
     return response.data;
   },
 };
+
+export const userAPI = {
+  checkUsername: async (username: string) => {
+    const response = await apiClient.post('/api/user/check-username', { username });
+    return response.data;
+  },
+  updateUsername: async (username: string) => {
+    const response = await apiClient.put('/api/user/username', { username });
+    return response.data;
+  },
+  updatePassword: async (currentPassword: string, newPassword: string) => {
+    const response = await apiClient.put('/api/user/password', {
+      currentPassword,
+      newPassword,
+    });
+    return response.data;
+  },
+  getProfile: async () => {
+    const response = await apiClient.get('/api/user/profile');
+    return response.data;
+  },
+  getPurchasedCourses: async () => {
+    const response = await apiClient.get('/api/user/purchased-courses');
+    return response.data;
+  },
+};

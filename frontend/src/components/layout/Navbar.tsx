@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { AnimatedThemeToggle } from '@/components/ui/animated-theme-toggle';
+import UserDropdown from '@/components/layout/UserDropdown';
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -37,18 +38,8 @@ export default function Navbar() {
                 >
                   Dashboard
                 </Link>
-                <span className="text-gray-600 dark:text-gray-400 text-sm">
-                  Hello, {session.user?.name}
-                </span>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => signOut({ callbackUrl: '/login' })}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-600 transition-colors"
-                >
-                  Logout
-                </motion.button>
                 <AnimatedThemeToggle />
+                <UserDropdown />
               </>
             ) : (
               <>

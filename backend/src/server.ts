@@ -8,6 +8,7 @@ import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth';
 import courseRoutes from './routes/courses';
 import dashboardRoutes from './routes/dashboard';
+import userRoutes from './routes/user';
 
 // Load environment variables
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/user', userRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

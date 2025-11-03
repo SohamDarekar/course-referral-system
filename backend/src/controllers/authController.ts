@@ -102,10 +102,12 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     // Validate input
     const validatedData = loginSchema.parse(req.body);
-    const { email, password } = validatedData;
+    const { identifier, password } = validatedData;
 
-    // Find user
-    const user = await User.findOne({ email });
+    // Find user by email or username
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { username: identifier }],
+    });
 
     if (!user) {
       res.status(401).json({ error: 'Invalid credentials' });

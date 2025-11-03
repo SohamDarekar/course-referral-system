@@ -9,17 +9,17 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
+        identifier: { label: 'Email or Username', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         try {
-          if (!credentials?.email || !credentials?.password) {
-            throw new Error('Email and password are required');
+          if (!credentials?.identifier || !credentials?.password) {
+            throw new Error('Email/Username and password are required');
           }
 
           const response = await axios.post(`${API_URL}/api/auth/login`, {
-            email: credentials.email,
+            identifier: credentials.identifier,
             password: credentials.password,
           });
 

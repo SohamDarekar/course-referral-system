@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
+'use client';
+
 import { useTheme } from "next-themes";
-import {Button} from "./button"
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
 
@@ -9,13 +9,13 @@ export const AnimatedThemeToggle = ({className}:{className?:string}) => {
   const isDark = theme === "dark";
 
   return (
-    <Button
+    <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={cn("px-2.5",className)}
-      variant="outline"
+      className={`px-2.5 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${className || ''}`}
+      aria-label="Toggle theme"
     >
       <SolarSwitch isDark={isDark} />
-    </Button>
+    </button>
   );
 };
 

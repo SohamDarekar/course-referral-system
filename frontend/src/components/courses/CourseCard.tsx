@@ -15,10 +15,11 @@ interface Course {
 
 interface CourseCardProps {
   course: Course;
+  isPurchased?: boolean;
   onPurchaseSuccess?: () => void;
 }
 
-export default function CourseCard({ course, onPurchaseSuccess }: CourseCardProps) {
+export default function CourseCard({ course, isPurchased = false, onPurchaseSuccess }: CourseCardProps) {
   const { data: session } = useSession();
   const [purchasing, setPurchasing] = useState(false);
   const { showNotification } = useNotificationStore();
@@ -69,19 +70,25 @@ export default function CourseCard({ course, onPurchaseSuccess }: CourseCardProp
         <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">{course.description}</p>
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">${course.price}</span>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handlePurchase}
-            disabled={purchasing || !session}
-            className={`px-6 py-2 rounded-md font-medium transition-colors ${
-              purchasing || !session
-                ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                : 'bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600'
-            }`}
-          >
-            {purchasing ? 'Processing...' : 'Buy Course'}
-          </motion.button>
+          {isPurchased ? (
+            <div className="px-6 py-2 rounded-md font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-2 border-green-500 dark:border-green-600">
+              ✓ Bought
+            </div>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handlePurchase}
+              disabled={purchasing || !session}
+              className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                purchasing || !session
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  : 'bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600'
+              }`}
+            >
+              {purchasing ? 'Processing...' : 'Buy Course'}
+            </motion.button>
+          )}
         </div>
       </div>
     </motion.div>

@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 import CourseCard from '@/components/courses/CourseCard';
 import Notification from '@/components/ui/Notification';
-import { coursesAPI } from '@/lib/api';
+import { coursesAPI, apiClient } from '@/lib/api';
 import { useLoadingStore } from '@/store/useStore';
 
 interface Course {
@@ -16,11 +17,19 @@ interface Course {
 
 export default function Home() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [purchasedCourseIds, setPurchasedCourseIds] = useState<string[]>([]);
   const { isLoading, setLoading } = useLoadingStore();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchPurchasedCourses();
+    }
+  }, [status]);
 
   const fetchCourses = async () => {
     try {
@@ -31,6 +40,19 @@ export default function Home() {
       console.error('Failed to fetch courses:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPurchasedCourses = async () => {
+    try {
+      const response = await apiClient.get('/api/user/check-purchased', {
+        headers: {
+          Authorization: `Bearer ${(session as any)?.accessToken}`,
+        },
+      });
+      setPurchasedCourseIds(response.data.purchasedCourseIds || []);
+    } catch (error) {
+      console.error('Failed to fetch purchased courses:', error);
     }
   };
 
@@ -73,7 +95,12 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {courses.map((course) => (
-                <CourseCard key={course._id} course={course} />
+                <CourseCard 
+                  key={course._id} 
+                  course={course}
+                  isPurchased={purchasedCourseIds.includes(course._id)}
+                  onPurchaseSuccess={fetchPurchasedCourses}
+                />
               ))}
             </div>
           )}

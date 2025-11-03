@@ -1,6 +1,8 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
+import Course from '../models/Course';
+import Purchase from '../models/Purchase';
 import { AuthRequest } from '../middleware/auth';
 
 export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -17,6 +19,32 @@ export const purchaseCourse = async (req: AuthRequest, res: Response): Promise<v
       res.status(401).json({ error: 'User not authenticated' });
       return;
     }
+
+    // Check if course exists
+    const course = await Course.findById(courseId).session(session);
+    if (!course) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(404).json({ error: 'Course not found' });
+      return;
+    }
+
+    // Check if user has already purchased this course
+    const existingPurchase = await Purchase.findOne({ userId, courseId }).session(session);
+    if (existingPurchase) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(400).json({ error: 'Course already purchased' });
+      return;
+    }
+
+    // Create purchase record
+    const purchase = new Purchase({
+      userId,
+      courseId,
+      price: course.price,
+    });
+    await purchase.save({ session });
 
     // Find the user with session for transactional consistency
     const user = await User.findById(userId).session(session);
