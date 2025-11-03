@@ -37,6 +37,12 @@ export default function Navbar() {
                   Courses
                 </Link>
                 <Link
+                  href="/my-courses"
+                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  My Learning
+                </Link>
+                <Link
                   href="/dashboard"
                   className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
@@ -97,6 +103,13 @@ export default function Navbar() {
                     className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors"
                   >
                     Courses
+                  </Link>
+                  <Link
+                    href="/my-courses"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors"
+                  >
+                    My Learning
                   </Link>
                   <Link
                     href="/dashboard"

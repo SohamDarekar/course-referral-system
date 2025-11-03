@@ -251,14 +251,17 @@ export const getPurchasedCourses = async (req: AuthRequest, res: Response): Prom
       .populate('courseId', 'title description price')
       .sort({ purchaseDate: -1 });
 
-    const courses = purchases.map(purchase => ({
-      purchaseId: purchase._id,
-      courseId: (purchase.courseId as any)._id,
-      title: (purchase.courseId as any).title,
-      description: (purchase.courseId as any).description,
-      price: purchase.price,
-      purchaseDate: purchase.purchaseDate,
-    }));
+    // Filter out purchases where course was deleted (courseId is null)
+    const courses = purchases
+      .filter(purchase => purchase.courseId !== null)
+      .map(purchase => ({
+        purchaseId: purchase._id,
+        courseId: (purchase.courseId as any)._id,
+        title: (purchase.courseId as any).title,
+        description: (purchase.courseId as any).description,
+        price: purchase.price,
+        purchaseDate: purchase.purchaseDate,
+      }));
 
     res.status(200).json({
       courses,

@@ -45,7 +45,8 @@ const SolarSwitch = ({ isDark }: { isDark: boolean }) => {
   const pathLengthSun = useTransform(scaleSun, [0.6, 1], [0, 1]);
 
   return (
-    <motion.div animate={isDark ? "checked" : "unchecked"}>
+    // Avoid initial animation/hydration mismatch by disabling initial animation
+    <motion.div initial={false} animate={isDark ? "checked" : "unchecked"}>
       <motion.svg
         width="20"
         height="20"

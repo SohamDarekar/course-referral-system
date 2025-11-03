@@ -96,7 +96,7 @@ export default function UserDropdown({ mobile = false, onClose }: UserDropdownPr
           className="w-full flex items-center gap-3 px-3 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
         >
           <BookOpen size={18} />
-          <span>My Courses</span>
+          <span>My Learning</span>
         </button>
 
         <button
@@ -161,7 +161,7 @@ export default function UserDropdown({ mobile = false, onClose }: UserDropdownPr
                 className="w-full flex items-center gap-3 px-3 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               >
                 <BookOpen size={18} />
-                <span>My Courses</span>
+                <span>My Learning</span>
               </button>
 
               {/* Copy Referral Code */}

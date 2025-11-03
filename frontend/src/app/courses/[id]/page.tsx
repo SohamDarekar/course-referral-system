@@ -285,7 +285,7 @@ export default function CourseDetailsPage() {
               <div className="px-6 sm:px-8 py-4 sm:py-6 bg-gray-50 dark:bg-gray-900/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>{renderStars(course.rating)}</div>
                 <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                  ${course.price}
+                  ₹{course.price}
                 </div>
               </div>
             </div>
@@ -385,7 +385,7 @@ export default function CourseDetailsPage() {
                           Buy with Money
                         </h3>
                         <p className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-3 sm:mb-4">
-                          ${course.price}
+                          ₹{course.price}
                         </p>
                         <button
                           onClick={handlePurchaseWithMoney}

@@ -1,0 +1,5 @@
+<!-- Placeholder favicon to avoid 404s during development. Replace with a proper ICO later. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <rect width="48" height="48" rx="8" fill="#4f46e5" />
+  <text x="50%" y="50%" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="20" text-anchor="middle" alignment-baseline="central">CS</text>
+</svg>

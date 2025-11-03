@@ -7,6 +7,8 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Prevent hanging requests and surface timeouts faster in dev
+  timeout: 15000,
 });
 
 // Helper function to set the auth token

@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           <AuthProvider>
             <Navbar />
             <main className="min-h-screen">{children}</main>
+            <Footer />
           </AuthProvider>
         </ThemeProvider>
       </body>
